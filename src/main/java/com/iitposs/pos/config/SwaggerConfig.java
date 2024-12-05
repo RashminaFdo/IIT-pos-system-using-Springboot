@@ -6,7 +6,7 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-//configuring swaggerr
+//configuring swaggerrr
 @Configuration
 public class SwaggerConfig {
 
