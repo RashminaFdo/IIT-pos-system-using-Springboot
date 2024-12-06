@@ -4,7 +4,10 @@ import com.iitposs.pos.dto.request.ItemSaveRequestDTO;
 import com.iitposs.pos.dto.response.ItemAllDetailsResponseDTo;
 import com.iitposs.pos.dto.response.ItemResponseDTO;
 import com.iitposs.pos.service.ItemService;
+import com.iitposs.pos.util.enums.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,38 +21,38 @@ public class ItemController {
     private ItemService itemService;
 
     @PostMapping(path = "/save-item")
-    public String saveItem(@RequestBody ItemSaveRequestDTO saveRequestDTO) {
+    public ResponseEntity<StandardResponse> saveItem(@RequestBody ItemSaveRequestDTO saveRequestDTO) {
         String message = itemService.saveItem(saveRequestDTO);
-        return message;
+        return new ResponseEntity<StandardResponse>(
+                new StandardResponse(201,"Success",message), HttpStatus.CREATED
+        );
     }
+
     @PutMapping(path = "/update-item")
     public String updateItem(@RequestBody ItemSaveRequestDTO requestDTO) {
         String message = itemService.updateItem(requestDTO);
         return message;
     }
-    @GetMapping(
-        path = "/get-item-by-id",
-        params = "id"
-    )
-    public ItemResponseDTO getItemById(@RequestParam(value = "id") int itemID) {
-        return itemService.getItemById(itemID);
+
+    @GetMapping(path = "/get-item-by-name", params = "name")
+    public ResponseEntity<StandardResponse> getItemByName(@RequestParam(value = "name") String itemName) {
+        List<ItemResponseDTO> responseDTOS = itemService.getItemByName(itemName);
+        return new ResponseEntity<StandardResponse>(
+                new StandardResponse(201, "Success", responseDTOS), HttpStatus.CREATED
+        );
     }
-    @GetMapping(
-        path = "/get-all-items"
-    )
+
+    @GetMapping(path = "/get-all-items")
     public List<ItemResponseDTO> getAllItems() {
         return itemService.getAllItems();
     }
-    @DeleteMapping(
-        path = "/delete-item/{id}"
-    )
+
+    @DeleteMapping(path = "/delete-item/{id}")
     public String deleteItem(@PathVariable(value = "id") int itemID) {
         return itemService.deleteItem(itemID);
     }
-    @GetMapping(
-        path = "/get-all-items-by-state",
-        params = "state"
-    )
+
+    @GetMapping(path = "/get-all-items-by-state", params = "state")
     public List<ItemAllDetailsResponseDTo> getItemsByState(@RequestParam(value = "state") boolean state) {
         List<ItemAllDetailsResponseDTo> dToList = itemService.getAllItemsByState(state);
         return dToList;

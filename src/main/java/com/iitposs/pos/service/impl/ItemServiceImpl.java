@@ -6,6 +6,8 @@ import com.iitposs.pos.dto.response.ItemResponseDTO;
 import com.iitposs.pos.entity.Item;
 import com.iitposs.pos.repo.ItemRepo;
 import com.iitposs.pos.service.ItemService;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,21 +20,20 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private ItemRepo itemRepo;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public String saveItem(ItemSaveRequestDTO saveRequestDTO) {
-        Item item = new Item(
-                saveRequestDTO.getItemID(),
-                saveRequestDTO.getName(),
-                saveRequestDTO.getMeasuringType(),
-                saveRequestDTO.getSupplierPrice(),
-                saveRequestDTO.getDisplayPrice(),
-                saveRequestDTO.getSellingPrice(),
-                saveRequestDTO.getQtyOnHand(),
-                saveRequestDTO.isActiveState()
-        );
+    Item item = modelMapper.map(saveRequestDTO, Item.class);
+
+    if (!itemRepo.existsById(item.getItemID())) {
         itemRepo.save(item);
-        return "saved";
+        return "Item saved successfully";
+    } else {
+        return "Item already exists";
     }
+}
 
     @Override
     public String updateItem(ItemSaveRequestDTO requestDTO) {
@@ -54,27 +55,6 @@ public class ItemServiceImpl implements ItemService {
 
         } else {
             return "something went wrong...!";
-        }
-    }
-
-    @Override
-    public ItemResponseDTO getItemById(int itemID) {
-
-        if (itemRepo.existsById(itemID)) {
-            Item item = itemRepo.getReferenceById(itemID);
-
-            return new ItemResponseDTO(
-                    item.getItemID(),
-                    item.getName(),
-                    item.getMeasuringType(),
-                    item.getSupplierPrice(),
-                    item.getDisplayPrice(),
-                    item.getSellingPrice(),
-                    item.getQtyOnHand(),
-                    item.isActiveState()
-            );
-        } else {
-            return null;
         }
     }
 
@@ -131,4 +111,20 @@ public class ItemServiceImpl implements ItemService {
         }
         return responseDTos;
     }
+
+    @Override
+    public List<ItemResponseDTO> getItemByName(String itemName) {
+        List<Item> items = itemRepo.findAllByNameEqualsAndActiveState(itemName,true);
+
+        if (!items.isEmpty()) {
+            List<ItemResponseDTO> itemResponseDTOS = modelMapper.map(
+                    items, new TypeToken<List<ItemResponseDTO>>() {
+                    }.getType()
+            );
+            return itemResponseDTOS;
+        }else{
+            return null;
+        }
+    }
+
 }
