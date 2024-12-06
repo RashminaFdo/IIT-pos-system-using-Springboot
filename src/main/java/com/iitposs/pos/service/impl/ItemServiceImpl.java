@@ -1,14 +1,18 @@
 package com.iitposs.pos.service.impl;
 
+import com.iitposs.pos.dto.paginated.PaginatedResponseItemDTO;
 import com.iitposs.pos.dto.request.ItemSaveRequestDTO;
 import com.iitposs.pos.dto.response.ItemAllDetailsResponseDTo;
 import com.iitposs.pos.dto.response.ItemResponseDTO;
 import com.iitposs.pos.entity.Item;
+import com.iitposs.pos.exception.NotFoundException;
 import com.iitposs.pos.repo.ItemRepo;
 import com.iitposs.pos.service.ItemService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,19 +29,18 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public String saveItem(ItemSaveRequestDTO saveRequestDTO) {
-    Item item = modelMapper.map(saveRequestDTO, Item.class);
+        Item item = modelMapper.map(saveRequestDTO, Item.class);
 
-    if (!itemRepo.existsById(item.getItemID())) {
-        itemRepo.save(item);
-        return "Item saved successfully";
-    } else {
-        return "Item already exists";
+        if (!itemRepo.existsById(item.getItemID())) {
+            itemRepo.save(item);
+            return "Item saved successfully";
+        } else {
+            return "Item already exists";
+        }
     }
-}
 
     @Override
     public String updateItem(ItemSaveRequestDTO requestDTO) {
-
         if (itemRepo.existsById(requestDTO.getItemID())) {
             Item item = itemRepo.getReferenceById(requestDTO.getItemID());
 
@@ -52,7 +55,6 @@ public class ItemServiceImpl implements ItemService {
             itemRepo.save(item);
 
             return requestDTO.getName() + " has been updated...!";
-
         } else {
             return "something went wrong...!";
         }
@@ -60,12 +62,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemResponseDTO> getAllItems() {
-
         List<Item> items = itemRepo.findAll();
         List<ItemResponseDTO> responseDTOS = new ArrayList<>();
 
         for (Item item : items) {
-
             responseDTOS.add(new ItemResponseDTO(
                     item.getItemID(),
                     item.getName(),
@@ -76,7 +76,6 @@ public class ItemServiceImpl implements ItemService {
                     item.getQtyOnHand(),
                     item.isActiveState()
             ));
-
         }
         return responseDTOS;
     }
@@ -97,7 +96,6 @@ public class ItemServiceImpl implements ItemService {
         List<ItemAllDetailsResponseDTo> responseDTos = new ArrayList<>();
 
         for (Item item : items) {
-
             responseDTos.add(new ItemAllDetailsResponseDTo(
                     item.getItemID(),
                     item.getName(),
@@ -114,17 +112,29 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemResponseDTO> getItemByName(String itemName) {
-        List<Item> items = itemRepo.findAllByNameEqualsAndActiveState(itemName,true);
+        List<Item> items = itemRepo.findAllByNameEqualsAndActiveState(itemName, true);
 
         if (!items.isEmpty()) {
-            List<ItemResponseDTO> itemResponseDTOS = modelMapper.map(
-                    items, new TypeToken<List<ItemResponseDTO>>() {
-                    }.getType()
-            );
-            return itemResponseDTOS;
-        }else{
-            return null;
+            return modelMapper.map(items, new TypeToken<List<ItemResponseDTO>>() {}.getType());
+        } else {
+            return new ArrayList<>();
         }
     }
 
+    @Override
+    public PaginatedResponseItemDTO getItemsByState(boolean state, int page, int size) {
+        Page<Item> items = itemRepo.findAllByActiveStateEquals(state, PageRequest.of(page, size));
+        if (!items.isEmpty()){
+            List<ItemResponseDTO> itemResponseDTOS =
+                    modelMapper.map(items.getContent(), new TypeToken<List<ItemResponseDTO>>() {
+                    }.getType());
+            return new PaginatedResponseItemDTO(
+                    itemResponseDTOS,
+                    items.getTotalElements()
+            );
+
+        }else{
+            throw new NotFoundException("No items found");
+        }
+    }
 }

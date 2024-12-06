@@ -1,5 +1,6 @@
 package com.iitposs.pos.controller;
 
+import com.iitposs.pos.dto.paginated.PaginatedResponseItemDTO;
 import com.iitposs.pos.dto.request.ItemSaveRequestDTO;
 import com.iitposs.pos.dto.response.ItemAllDetailsResponseDTo;
 import com.iitposs.pos.dto.response.ItemResponseDTO;
@@ -23,8 +24,8 @@ public class ItemController {
     @PostMapping(path = "/save-item")
     public ResponseEntity<StandardResponse> saveItem(@RequestBody ItemSaveRequestDTO saveRequestDTO) {
         String message = itemService.saveItem(saveRequestDTO);
-        return new ResponseEntity<StandardResponse>(
-                new StandardResponse(201,"Success",message), HttpStatus.CREATED
+        return new ResponseEntity<>(
+                new StandardResponse(201, "Success", message), HttpStatus.CREATED
         );
     }
 
@@ -37,7 +38,7 @@ public class ItemController {
     @GetMapping(path = "/get-item-by-name", params = "name")
     public ResponseEntity<StandardResponse> getItemByName(@RequestParam(value = "name") String itemName) {
         List<ItemResponseDTO> responseDTOS = itemService.getItemByName(itemName);
-        return new ResponseEntity<StandardResponse>(
+        return new ResponseEntity<>(
                 new StandardResponse(201, "Success", responseDTOS), HttpStatus.CREATED
         );
     }
@@ -52,9 +53,15 @@ public class ItemController {
         return itemService.deleteItem(itemID);
     }
 
-    @GetMapping(path = "/get-all-items-by-state", params = "state")
-    public List<ItemAllDetailsResponseDTo> getItemsByState(@RequestParam(value = "state") boolean state) {
-        List<ItemAllDetailsResponseDTo> dToList = itemService.getAllItemsByState(state);
-        return dToList;
+    @GetMapping(path = "/get-all-items-by-state", params = {"state", "page", "size"})
+    public ResponseEntity<StandardResponse> getAllItemByState(
+            @RequestParam(value = "state") boolean state,
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size
+    ) {
+        PaginatedResponseItemDTO pdto = itemService.getItemsByState(state, page, size);
+        return new ResponseEntity<>(
+                new StandardResponse(201, "Success", pdto), HttpStatus.CREATED
+        );
     }
 }
