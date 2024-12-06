@@ -3,7 +3,6 @@ package com.iitposs.pos.service.impl;
 import com.iitposs.pos.dto.request.ItemSaveRequestDTO;
 import com.iitposs.pos.dto.response.ItemAllDetailsResponseDTo;
 import com.iitposs.pos.dto.response.ItemResponseDTO;
-import com.iitposs.pos.entity.Customer;
 import com.iitposs.pos.entity.Item;
 import com.iitposs.pos.repo.ItemRepo;
 import com.iitposs.pos.service.ItemService;
@@ -21,7 +20,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public String saveItem(ItemSaveRequestDTO saveRequestDTO) {
-
         Item item = new Item(
                 saveRequestDTO.getItemID(),
                 saveRequestDTO.getName(),
@@ -54,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
 
             return requestDTO.getName() + " has been updated...!";
 
-        }else {
+        } else {
             return "something went wrong...!";
         }
     }
@@ -75,7 +73,7 @@ public class ItemServiceImpl implements ItemService {
                     item.getQtyOnHand(),
                     item.isActiveState()
             );
-        }else {
+        } else {
             return null;
         }
     }
@@ -86,7 +84,7 @@ public class ItemServiceImpl implements ItemService {
         List<Item> items = itemRepo.findAll();
         List<ItemResponseDTO> responseDTOS = new ArrayList<>();
 
-        for (Item item: items) {
+        for (Item item : items) {
 
             responseDTOS.add(new ItemResponseDTO(
                     item.getItemID(),
@@ -108,7 +106,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemRepo.existsById(itemID)) {
             itemRepo.deleteById(itemID);
             return itemID + " has been deleted...!";
-        }else {
+        } else {
             return "Item not found...!";
         }
     }
@@ -118,7 +116,7 @@ public class ItemServiceImpl implements ItemService {
         List<Item> items = itemRepo.findAllByActiveState(state);
         List<ItemAllDetailsResponseDTo> responseDTos = new ArrayList<>();
 
-        for (Item item: items) {
+        for (Item item : items) {
 
             responseDTos.add(new ItemAllDetailsResponseDTo(
                     item.getItemID(),

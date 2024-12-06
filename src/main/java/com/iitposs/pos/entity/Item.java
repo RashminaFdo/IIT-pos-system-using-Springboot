@@ -14,11 +14,11 @@ import javax.persistence.*;
 public class Item {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private int itemID;
 
-    @Column(name = "item_name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "measuring_type", nullable = false)
@@ -39,5 +39,4 @@ public class Item {
 
     @Column(name = "active_state", nullable = false)
     private boolean activeState;
-
 }
