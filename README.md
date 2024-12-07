@@ -99,7 +99,7 @@ _It is recommended to run and test the API endpoints through Swagger. Swagger UI
   - GET /api/v1/customer/get-all-customers-by-state
   - Query Parameter: state
 # Contributing
-** Contributions are not allowed. If you want to make changes, please download and edit a duplicate of the project. **
+**Contributions are not allowed. If you want to make changes, please download and edit a duplicate of the project.** 
 ### License
 This project is licensed under the MIT [https://github.com/remy/mit-license.git](License).
 ### Contact
