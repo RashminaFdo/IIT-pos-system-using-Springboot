@@ -98,6 +98,11 @@ _It is recommended to run and test the API endpoints through Swagger. Swagger UI
 6. Get Customers by State:  
   - GET /api/v1/customer/get-all-customers-by-state
   - Query Parameter: state
+## Order Endpoints
+1. Save Order:
+  - POST /api/v1/order/save-order
+  - Request Body: OrderSaveRequestDTO
+      
 # Contributing
 **Contributions are not allowed. If you want to make changes, please download and edit a duplicate of the project.** 
 ### License
