@@ -14,5 +14,5 @@ public interface ItemService {
     String deleteItem(int itemID);
     List<ItemAllDetailsResponseDTo> getAllItemsByState(boolean state);
     List<ItemResponseDTO> getItemByName(String itemName);
-    PaginatedResponseItemDTO getItemsByState(boolean state, int page, int size); // Ensure this method is declared
+    PaginatedResponseItemDTO getItemsByState(boolean state, int page, int size);
 }

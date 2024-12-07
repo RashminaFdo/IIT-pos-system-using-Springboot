@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "item")
@@ -55,4 +56,7 @@ public class Item {
         this.qtyOnHand = qtyOnHand;
         this.activeState = activeState;
     }
+
+    @OneToMany(mappedBy = "items")
+    private Set<OrderDetails> orderDetails;
 }
